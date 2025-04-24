@@ -13,13 +13,74 @@
                 <img src="@/assets/feed/messageIcon.png" alt="" class="toolItem" />
             </div>
         </div>
-        <div class="articleList"></div>
+        <div class="articleListBox">
+            <div class="leftArticleBox">
+                <div class="articleItem" v-for="(item, index) in leftArticleList" :key="item.uid">
+                    <!-- 文章资源 -->
+                    <div v-if="index % 2 == 0">
+                        <img src="@/assets/article/goodsImage.jpg" alt="" class="articleImage" />
+                    </div>
+                    <div v-else>
+                        <video src="@/assets/article/video.mp4" class="articleImage" controls></video>
+                    </div>
+                    <div class="articleInfo">
+                        <!-- 文章标题 -->
+                        <div class="articleName">
+                            {{ item.title }}
+                        </div>
+                        <div class="gameName">
+                            {{ item.gameCircleName }}
+                        </div>
+                        <div class="authorBox">
+                            <div class="authorInfo">
+                                <img :src="item.uportrait" alt="" class="authorImage">
+                                <div class="authorName">{{ item.uname }}</div>
+                            </div>
+                            <div class="likeNumberBox">
+                                <img src="@/assets/feed/likeIcon.png" alt="" class="likeIcon">
+                                <div class="likeNumber">{{ item.likeCount }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="rightArticleBox">
+                <div class="articleItem" v-for="(item, index) in rightArticleList" :key="item.uid">
+                    <!-- 文章资源 -->
+                    <div v-if="index % 2 == 1">
+                        <img src="@/assets/article/goodsImage.jpg" alt="" class="articleImage" />
+                    </div>
+                    <div v-else>
+                        <video src="@/assets/article/video.mp4" class="articleImage" controls></video>
+                    </div>
+                    <div class="articleInfo">
+                        <!-- 文章标题 -->
+                        <div class="articleName">
+                            {{ item.title }}
+                        </div>
+                        <div class="gameName">
+                            {{ item.gameCircleName }}
+                        </div>
+                        <div class="authorBox">
+                            <div class="authorInfo">
+                                <img :src="item.uportrait" alt="" class="authorImage">
+                                <div class="authorName">{{ item.uname }}</div>
+                            </div>
+                            <div class="likeNumberBox">
+                                <img src="@/assets/feed/likeIcon.png" alt="" class="likeIcon">
+                                <div class="likeNumber">{{ item.likeCount }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
-import type { articleItem } from '@/types/home'
-import { getArticleList } from '@/api/feed'
+import type { articleItem } from "@/types/home";
+import { getArticleList } from "@/api/feed";
 import { showToast } from "vant";
 // 1.tab页签
 const tabList = ref([] as any);
@@ -46,39 +107,37 @@ const changeTab = (index: number) => {
 // 2.文章相关
 const params = ref({
     offSet: 32,
-    page: 1
-})
-const leftArticleList = ref<articleItem[]>([])
-const rightArticleList = ref<articleItem[]>([])
-const isFinshed = ref(false)
+    page: 1,
+});
+const leftArticleList = ref<articleItem[]>([]);
+const rightArticleList = ref<articleItem[]>([]);
+const isFinshed = ref(false);
 const loadList = async () => {
-    const res = await getArticleList(params.value)
+    const res = await getArticleList(params.value);
     //    console.log(res,'res');
     //    console.log(res.isEnd,'isEnd');
     //    console.log(res.postItems,'postItems');
     if (isFinshed.value) {
-        return showToast('没有更多了')
+        return showToast("没有更多了");
     }
     // 游客请求，isEnd默认返回 true?????????????????????
-    isFinshed.value = !res.isEnd
+    isFinshed.value = !res.isEnd;
     if (res.postItems.length > 0) {
         // articleList.value = [...articleList.value, ...res.postItems]
-        const {left,right}=splitArrayByIndex(res.postItems)
+        const { left, right } = splitArrayByIndex(res.postItems);
         // console.log(left,'left');
         // console.log(right,'right');
-        leftArticleList.value=[...leftArticleList.value,...left]
-        rightArticleList.value=[...rightArticleList.value,...right]
-
-        
+        leftArticleList.value = [...leftArticleList.value, ...left];
+        rightArticleList.value = [...rightArticleList.value, ...right];
     }
-}
+};
 
 onMounted(async () => {
-    loadList()
-})
+    loadList();
+});
 
 // 2.2 数组分割
-const splitArrayByIndex=(arr:articleItem[])=> {
+const splitArrayByIndex = (arr: articleItem[]) => {
     const left = [];
     const right = [];
 
@@ -92,9 +151,9 @@ const splitArrayByIndex=(arr:articleItem[])=> {
 
     return {
         left: left,
-        right: right
+        right: right,
     };
-}
+};
 </script>
 <style lang="scss" scoped>
 .container {
@@ -153,9 +212,109 @@ const splitArrayByIndex=(arr:articleItem[])=> {
         }
     }
 
-    .articleList {
+    .articleListBox {
+        display: flex;
+        justify-content: space-between;
         width: 100%;
-        flex: 1;
+        height: calc(100vh - 103px);
+        background-color: pink;
+        overflow: auto;
+
+        .leftArticleBox,.rightArticleBox {
+            width: 180px;
+            height: 100%;
+
+            // background-color: pink;
+
+            .articleItem {
+                width: 180px;
+                background-color: #fff;
+                border-radius: 20px;
+                overflow: hidden;
+                margin-bottom: 10px;
+                padding-bottom: 20px;
+
+                .articleImage {
+                    width: 180px;
+                }
+
+                .articleInfo {
+                    display: flex;
+                    flex-direction: column;
+                    width: 180px;
+                    padding: 0px 10px;
+                    box-sizing: border-box;
+
+                    .articleName {
+                        font-size: 12px;
+                        margin-top: 5px;
+                        word-break: break-all;
+                    }
+
+                    .gameName {
+                        width: 100%;
+                        font-size: 10px;
+                        color: #ccc;
+                        margin-top: 5px;
+                        word-break: break-all;
+                    }
+
+                    .authorBox {
+                        display: flex;
+                        justify-content: space-between;
+                        width: 100%;
+                        height: 20px;
+                        margin-top: 5px;
+
+                        .authorInfo {
+                            display: flex;
+                            align-items: center;
+                            justify-content: space-between;
+                            width: 100px;
+                            height: 20px;
+
+                            .authorImage {
+                                display: block;
+                                width: 20px;
+                                height: 20px;
+                                border-radius: 10px;
+                            }
+
+                            .authorName {
+                                width: 70px;
+                                font-size: 12px;
+                                white-space: nowrap;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+
+                            }
+                        }
+
+                        .likeNumberBox {
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: flex-end;
+                            width: 50px;
+                            height: 20px;
+
+                            .likeIcon {
+                                display: block;
+                                width: 20px;
+                                height: 20px;
+                                
+                            }
+
+                            .likeNumber {
+                                font-size: 12px;
+
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+
         // background-color: pink;
     }
 }
