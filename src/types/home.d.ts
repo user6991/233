@@ -22,8 +22,6 @@ uid:string,
 uname:string,//用户名称 
 uportrait: string,//用户头像
 
-type:0|1 ,//0 图片 1.视频
-resourcePath:'',//资源路径
 }
 
 

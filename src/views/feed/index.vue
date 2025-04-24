@@ -17,7 +17,10 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
+import type { articleItem } from '@/types/home'
+import { getArticleList } from '@/api/feed'
+import { showToast } from "vant";
 // 1.tab页签
 const tabList = ref([] as any);
 tabList.value = [
@@ -39,6 +42,59 @@ const currentTabIndex = ref(0);
 const changeTab = (index: number) => {
     currentTabIndex.value = index;
 };
+
+// 2.文章相关
+const params = ref({
+    offSet: 32,
+    page: 1
+})
+const leftArticleList = ref<articleItem[]>([])
+const rightArticleList = ref<articleItem[]>([])
+const isFinshed = ref(false)
+const loadList = async () => {
+    const res = await getArticleList(params.value)
+    //    console.log(res,'res');
+    //    console.log(res.isEnd,'isEnd');
+    //    console.log(res.postItems,'postItems');
+    if (isFinshed.value) {
+        return showToast('没有更多了')
+    }
+    // 游客请求，isEnd默认返回 true?????????????????????
+    isFinshed.value = !res.isEnd
+    if (res.postItems.length > 0) {
+        // articleList.value = [...articleList.value, ...res.postItems]
+        const {left,right}=splitArrayByIndex(res.postItems)
+        // console.log(left,'left');
+        // console.log(right,'right');
+        leftArticleList.value=[...leftArticleList.value,...left]
+        rightArticleList.value=[...rightArticleList.value,...right]
+
+        
+    }
+}
+
+onMounted(async () => {
+    loadList()
+})
+
+// 2.2 数组分割
+const splitArrayByIndex=(arr:articleItem[])=> {
+    const left = [];
+    const right = [];
+
+    for (let i = 0; i < arr.length; i++) {
+        if (i % 2 === 1) {
+            left.push(arr[i]);
+        } else {
+            right.push(arr[i]);
+        }
+    }
+
+    return {
+        left: left,
+        right: right
+    };
+}
 </script>
 <style lang="scss" scoped>
 .container {

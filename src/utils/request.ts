@@ -11,7 +11,7 @@ const baseURL = import.meta.env.VITE_BASE_URL
 interface ApiResponse<T> {
   code: number;
   message: string;
-  result: T;
+  data: any;
 }
 
 const request: AxiosInstance = axios.create({
@@ -22,8 +22,6 @@ const request: AxiosInstance = axios.create({
 // 请求拦截器
 request.interceptors.request.use(
   (config) => {
-    const store = useUserStore()
-    
     loadingService.open()
     // if (store.user?.token) {
     //   loadingService.open()
@@ -44,7 +42,7 @@ request.interceptors.response.use(
     if (res.data.code === 200) {      
       loadingService.close();
       // 返回 result 字段中的数据
-      return res.data.result;
+      return res.data.data;
     }
 
     // 请求不成功，关闭loading并显示相应提示信息，然后返回被拒绝的Promise
