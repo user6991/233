@@ -13,6 +13,7 @@
                 <img src="@/assets/feed/messageIcon.png" alt="" class="toolItem" />
             </div>
         </div>
+        <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
         <div class="articleListBox" ref="scrollableRef" @scroll="handleScroll">
             <div class="leftArticleBox">
                 <div class="articleItem" v-for="(item, index) in leftArticleList" :key="item.uid">
@@ -75,6 +76,7 @@
                 </div>
             </div>
         </div>
+    </van-pull-refresh>
     </div>
 </template>
 <script lang="ts" setup>
@@ -181,7 +183,17 @@ const handleScroll =async () => {
         }
     }
 };
-
+// 2.4 刷新
+const  refreshing=ref(false) 
+const onRefresh=async ()=>{
+    console.log('刷新');
+    leftArticleList.value=[]
+    rightArticleList.value=[]
+    params.value.page=1
+    await loadList()
+    refreshing.value=false
+    
+}
 </script>
 <style lang="scss" scoped>
 .container {
