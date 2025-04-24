@@ -10,5 +10,6 @@ declare module 'vue' {
     Loading: typeof import('./src/components/loading.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Tabbar: typeof import('./src/components/tabbar.vue')['default']
   }
 }
