@@ -16,6 +16,7 @@ import tabbar from '@/components/tabbar.vue'
     flex-direction: column;
     width: 100vw;
     height: 100vh;
+    padding-top: env(safe-area-inset-top);
     padding-bottom: calc(53px + env(safe-area-inset-bottom));
     box-sizing: border-box;
     .appMain {
