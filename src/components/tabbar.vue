@@ -77,7 +77,6 @@ const goPage=(path:string)=>{
     background-color: #fff;
     border-top: 1px solid #ccc;
     padding-top: 2px;
-    padding-bottom: env(safe-area-inset-bottom);
 
     .tabbarItem {
         display: flex;

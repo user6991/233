@@ -1,6 +1,9 @@
 <template>
     <div class="home-page">
-        <RouterView></RouterView>
+        <div class="appMain">
+            <RouterView></RouterView>
+        </div>
+       
         <tabbar></tabbar>
     </div>
 </template>
@@ -9,7 +12,15 @@ import tabbar from '@/components/tabbar.vue'
 </script>
 <style lang="scss" scoped>
 .home-page {
+    display: flex;
+    flex-direction: column;
     width: 100vw;
     height: 100vh;
+    padding-bottom: calc(53px + env(safe-area-inset-bottom));
+    box-sizing: border-box;
+    .appMain {
+        width: 100%;
+        flex: 1;
+    }
 }
 </style>
