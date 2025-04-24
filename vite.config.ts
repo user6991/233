@@ -20,6 +20,12 @@ export default defineConfig({
       resolvers: [VantResolver()],
     }),
   ],
+  // server: {
+  //    host:'192.168.2.15',
+  //     port: 3000, // 指定开发服务器端口
+  //    open: true, // 服务器启动时自动打开浏览器
+  //    cors: true, // 允许跨域请求
+  //    },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
