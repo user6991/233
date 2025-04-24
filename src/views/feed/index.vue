@@ -13,7 +13,7 @@
                 <img src="@/assets/feed/messageIcon.png" alt="" class="toolItem" />
             </div>
         </div>
-        <div class="articleListBox">
+        <div class="articleListBox" ref="scrollableRef" @scroll="handleScroll">
             <div class="leftArticleBox">
                 <div class="articleItem" v-for="(item, index) in leftArticleList" :key="item.uid">
                     <!-- 文章资源 -->
@@ -112,24 +112,29 @@ const params = ref({
 const leftArticleList = ref<articleItem[]>([]);
 const rightArticleList = ref<articleItem[]>([]);
 const isFinshed = ref(false);
+const loading = ref(false)
 const loadList = async () => {
-    const res = await getArticleList(params.value);
-    //    console.log(res,'res');
-    //    console.log(res.isEnd,'isEnd');
-    //    console.log(res.postItems,'postItems');
-    if (isFinshed.value) {
-        return showToast("没有更多了");
-    }
-    // 游客请求，isEnd默认返回 true?????????????????????
-    isFinshed.value = !res.isEnd;
-    if (res.postItems.length > 0) {
-        // articleList.value = [...articleList.value, ...res.postItems]
-        const { left, right } = splitArrayByIndex(res.postItems);
-        // console.log(left,'left');
-        // console.log(right,'right');
-        leftArticleList.value = [...leftArticleList.value, ...left];
-        rightArticleList.value = [...rightArticleList.value, ...right];
-    }
+  
+  
+        const res = await getArticleList(params.value);
+        //    console.log(res,'res');
+        //    console.log(res.isEnd,'isEnd');
+        //    console.log(res.postItems,'postItems');
+        if (isFinshed.value) {
+            return showToast("没有更多了");
+        }
+        // 游客请求，isEnd默认返回 true?????????????????????
+        isFinshed.value = !res.isEnd;
+        if (res.postItems.length > 0) {
+            // articleList.value = [...articleList.value, ...res.postItems]
+            const { left, right } = splitArrayByIndex(res.postItems);
+            // console.log(left,'left');
+            // console.log(right,'right');
+            leftArticleList.value = [...leftArticleList.value, ...left];
+            rightArticleList.value = [...rightArticleList.value, ...right];
+        }
+  
+
 };
 
 onMounted(async () => {
@@ -154,6 +159,29 @@ const splitArrayByIndex = (arr: articleItem[]) => {
         right: right,
     };
 };
+// 2.3 滚动到底部
+const scrollableRef = ref(null);
+
+const handleScroll =async () => {
+    const scrollableBox: any = scrollableRef.value;
+    if (scrollableBox) {
+        const scrollTop = scrollableBox.scrollTop;
+        const clientHeight = scrollableBox.clientHeight;
+        const scrollHeight = scrollableBox.scrollHeight;
+
+        if (scrollTop + clientHeight >= scrollHeight) {
+            console.log('盒子已滚动到底部');
+            if(loading.value) {
+                return
+            }
+            loading.value=true
+            params.value.page++
+            await loadList()
+            loading.value=false
+        }
+    }
+};
+
 </script>
 <style lang="scss" scoped>
 .container {
@@ -217,10 +245,11 @@ const splitArrayByIndex = (arr: articleItem[]) => {
         justify-content: space-between;
         width: 100%;
         height: calc(100vh - 103px);
-        background-color: pink;
+        // background-color: pink;
         overflow: auto;
 
-        .leftArticleBox,.rightArticleBox {
+        .leftArticleBox,
+        .rightArticleBox {
             width: 180px;
             height: 100%;
 
@@ -301,7 +330,7 @@ const splitArrayByIndex = (arr: articleItem[]) => {
                                 display: block;
                                 width: 20px;
                                 height: 20px;
-                                
+
                             }
 
                             .likeNumber {
